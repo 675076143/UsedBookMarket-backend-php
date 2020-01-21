@@ -18,10 +18,14 @@ $sql = "SELECT * from `user` where `username`='$userName'";
 $result = fetchRow($link, $sql);
 $resultPassword = $result['password'];
 $resultSalt = $result['salt'];
-if ($password = md5(md5($password . $resultSalt)) !== $resultPassword) {
-    $result = array("code"=>'400',"message"=>"用户名或密码错误","data"=>null);
-    exit(json_encode($result));
-} else {
-    $result = array("code"=>'200',"message"=>"登录成功","data"=>$result);
-    exit(json_encode($result));
+
+if(strtoupper($_SERVER['REQUEST_METHOD'])=='POST'){
+    if ($password = md5(md5($password . $resultSalt)) !== $resultPassword) {
+        $result = array("code"=>'400',"message"=>"用户名或密码错误","data"=>null);
+        exit(json_encode($result));
+    } else {
+        $result = array("code"=>'200',"message"=>"登录成功","data"=>$result);
+        exit(json_encode($result));
+    }
 }
+

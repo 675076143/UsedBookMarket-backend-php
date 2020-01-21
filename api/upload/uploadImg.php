@@ -12,11 +12,11 @@ $size = $_FILES['file']['size'];
 $error = $_FILES['file']['error'];
 //判断文件大小是否超过设置的最大上传限制
 if ($size > 2*1024*1024){
-    $result = array("code"=>'400',"message"=>"文件大小超过2M大小","data"=>null);
+    $result = array("code"=>'400',"message"=>"File size exceeds 2m","data"=>null);
     exit(json_encode($result));
 }
-//phpinfo函数会以数组的形式返回关于文件路径的信息
-//[dirname]:目录路径[basename]:文件名[extension]:文件后缀名[filename]:不包含后缀的文件名
+//The phpinfo function returns information about the file path as an array
+////[dirname]: directory path [basename]: file name [Extension]: file suffix [filename]: file name without suffix
 $arr = pathinfo($filename);
 //获取文件的后缀名
 $ext_suffix = $arr['extension'];
@@ -24,7 +24,7 @@ $ext_suffix = $arr['extension'];
 $allow_suffix = array('jpg','gif','jpeg','png');
 //判断上传的文件是否在允许的范围内（后缀）==>白名单判断
 if(!in_array($ext_suffix, $allow_suffix)){
-    $result = array("code"=>'400',"message"=>"上传的文件类型只能是jpg,gif,jpeg,png","data"=>$result);
+    $result = array("code"=>'400',"message"=>"The uploaded file type can only bejpg,gif,jpeg,png","data"=>$result);
     exit(json_encode($result));
 }
 //检测存放上传文件的路径是否存在，如果不存在则新建目录
@@ -42,20 +42,20 @@ if (move_uploaded_file($temp_name, '../../upload/'.$new_filename)){
     exit(json_encode($result));
 }
 
-//文件上传error码以及含义：
-//$_FILES[‘file’][‘error’]有以下几种类型
+////File upload error code and meaning:
+//$_FILES[‘file’][‘error’]has the following types
 //
-//1、UPLOAD_ERR_OK：其值为 0，没有错误发生，文件上传成功。
+//1、UPLOAD_ERR_OK：the value is 0, no error occurs, and the file is uploaded successfully.
 //
-//2、UPLOAD_ERR_INI_SIZE：其值为 1，上传的文件超过了 php.ini 中 upload_max_filesize选项限制的值。
+//2、UPLOAD_ERR_INI_SIZE：the value is 1. The uploaded file exceeds the limit of the upload? Max? Filesize option in php.ini.
 //
-//3、UPLOAD_ERR_FORM_SIZE：其值为 2，上传文件的大小超过了 HTML 表单中 MAX_FILE_SIZE 选项指定的值。
+//3、UPLOAD_ERR_FORM_SIZE：the value is 2. The size of the uploaded file exceeds the value specified by the max? File? Size option in the HTML form.
 //
-//4、UPLOAD_ERR_PARTIAL：其值为 3，文件只有部分被上传。
+//4、UPLOAD_ERR_PARTIAL：its value is 3, and only part of the file is uploaded.
 //
-//5、UPLOAD_ERR_NO_FILE：其值为 4，没有文件被上传。
+//5、UPLOAD_ERR_NO_FILE：its value is 4, and no files are uploaded.
 //
-//6、UPLOAD_ERR_NO_TMP_DIR：其值为 6，找不到临时文件夹。PHP 4.3.10 和 PHP 5.0.3 引进。
+//6、UPLOAD_ERR_NO_TMP_DIR：its value is 6. No temporary folder was found. PHP 4.3.10 and PHP 5.0.3 were introduced.
 //
-//7、UPLOAD_ERR_CANT_WRITE：其值为 7，文件写入失败。PHP 5.1.0 引进。
+//7、UPLOAD_ERR_CANT_WRITE：its value is 7, file write failed. PHP 5.1.0 was introduced.
 
