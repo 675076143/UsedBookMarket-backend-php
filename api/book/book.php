@@ -6,7 +6,6 @@ require '../../public_function.php';
 $json_raw = file_get_contents("php://input");
 $json_data = json_decode($json_raw,true);
 //创建SQL连接
-header('content-type:application/json;charset=utf-8');
 $link = initMySqlConnector();
 $categoryID = isset($_GET["categoryID"])?$_GET["categoryID"]:null;
 $bookID = isset($_GET["bookID"])?$_GET["bookID"]:null;

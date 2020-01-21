@@ -9,7 +9,6 @@ $json_data = json_decode($json_raw,true);
 $userName = $json_data["userName"];
 $password = $json_data["password"];
 //创建SQL连接
-header('content-type:application/json;charset=utf-8');
 
 
 $link = initMySqlConnector();
