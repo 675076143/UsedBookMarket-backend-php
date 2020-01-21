@@ -18,8 +18,10 @@ $sql = "SELECT * from `user` where `username`='$userName'";
 $result = fetchRow($link, $sql);
 $resultPassword = $result['password'];
 $resultSalt = $result['salt'];
-
 if(strtoupper($_SERVER['REQUEST_METHOD'])=='POST'){
+    exit();
+}
+else if(strtoupper($_SERVER['REQUEST_METHOD'])=='POST'){
     if ($password = md5(md5($password . $resultSalt)) !== $resultPassword) {
         $result = array("code"=>'400',"message"=>"用户名或密码错误","data"=>null);
         exit(json_encode($result));
