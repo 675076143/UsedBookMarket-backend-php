@@ -1,16 +1,16 @@
 <?php
 require "../../headers.php";
-//设置时区
+//Set time zone
 date_default_timezone_set('PRC');
-//获取文件名
+//Get file name
 $filename = $_FILES['file']['name'];
-//获取文件临时路径
+//Get file temporary path
 $temp_name = $_FILES['file']['tmp_name'];
-//获取大小
+//Get size
 $size = $_FILES['file']['size'];
-//获取文件上传码，0代表文件上传成功
+//Get the file upload code. 0 means the file is uploaded successfully
 $error = $_FILES['file']['error'];
-//判断文件大小是否超过设置的最大上传限制
+//Determine whether the file size exceeds the set maximum upload limit
 if ($size > 2*1024*1024){
     $result = array("code"=>'400',"message"=>"File size exceeds 2m","data"=>null);
     exit(json_encode($result));
@@ -18,27 +18,27 @@ if ($size > 2*1024*1024){
 //The phpinfo function returns information about the file path as an array
 ////[dirname]: directory path [basename]: file name [Extension]: file suffix [filename]: file name without suffix
 $arr = pathinfo($filename);
-//获取文件的后缀名
+//Get the suffix of the file
 $ext_suffix = $arr['extension'];
-//设置允许上传文件的后缀
+//Set the suffix to allow uploading files
 $allow_suffix = array('jpg','gif','jpeg','png');
-//判断上传的文件是否在允许的范围内（后缀）==>白名单判断
+//Judge whether the uploaded file is within the allowed range (suffix) ==> white list
 if(!in_array($ext_suffix, $allow_suffix)){
     $result = array("code"=>'400',"message"=>"The uploaded file type can only bejpg,gif,jpeg,png","data"=>$result);
     exit(json_encode($result));
 }
-//检测存放上传文件的路径是否存在，如果不存在则新建目录
+//Check whether the path to store the uploaded file exists. If not, create a new directory
 if (!file_exists('uploads')){
     mkdir('uploads');
 }
-//为上传的文件新起一个名字，保证更加安全
+//Create a new name for the uploaded file to ensure more security
 $new_filename = date('YmdHis',time()).rand(100,1000).'.'.$ext_suffix;
-//将文件从临时路径移动到磁盘
+//Move files from temporary path to disk
 if (move_uploaded_file($temp_name, '../../upload/'.$new_filename)){
-    $result = array("code"=>'200',"message"=>"文件上传成功","data"=>array("url"=>"/upload/".$new_filename,"fileName"=>$new_filename));
+    $result = array("code"=>'200',"message"=>"File uploaded successfully","data"=>array("url"=>"/upload/".$new_filename,"fileName"=>$new_filename));
     exit(json_encode($result));
 }else{
-    $result = array("code"=>'400',"message"=>"文件上传失败,错误码：$error","data"=>null);
+    $result = array("code"=>'400',"message"=>"File upload failed, error code:$error","data"=>null);
     exit(json_encode($result));
 }
 

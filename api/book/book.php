@@ -1,27 +1,27 @@
 <?php
 require '../../headers.php';
 require '../../public_function.php';
-//获取表单提交数据
-//解析POST中的JSON数据
+//Get form submission data
+//Parsing JSON data in post
 $json_raw = file_get_contents("php://input");
 $json_data = json_decode($json_raw,true);
-//创建SQL连接
+//Create SQL connection
 $link = initMySqlConnector();
 $categoryID = isset($_GET["categoryID"])?$_GET["categoryID"]:null;
 $bookID = isset($_GET["bookID"])?$_GET["bookID"]:null;
 if(strtoupper($_SERVER['REQUEST_METHOD'])=='GET'){
     $where = "";
-    //查询语句
-    if($categoryID){//如果有分类ID代表获取该分类下的所有书本
+    //Query statement
+    if($categoryID){//If there is a classification ID, all books under the classification will be obtained
         $where = " where categoryID=$categoryID";
-    }elseif($bookID){//如果有bookID,则代表获取单个书本详情信息
+    }elseif($bookID){//If there is a bookid, it means to get individual book details
         $where =" where bookID=$bookID";
-    }else{//否则获取所有数据
+    }else{//Otherwise, get all data
         $where = "";
     }
     $sql = "SELECT * from book $where";
     if($res = fetchAll($link,$sql)){
-        //如果只有一条数据，就不返回数组了
+        //If there is only one data, the array will not be returned, and the object will be returned directly
         if(count($res) === 1){
             $res = $res[0];
         }

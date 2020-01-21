@@ -1,5 +1,5 @@
 <?php
-// 制定允许其他域名访问
+//Allow other domain names to access
 header("Access-Control-Allow-Origin:*");
 header("Access-Control-Allow-Credentials", "true");
 header('Access-Control-Allow-Methods:GET,POST,OPTIONS,PUT');

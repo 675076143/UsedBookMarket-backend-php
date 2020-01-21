@@ -2,20 +2,18 @@
 require '../../headers.php';
 require '../../public_function.php';
 require './check_form.php';
-//获取表单提交数据
-//解析POST中的JSON数据
+//Get form submission data
+//Parsing JSON data in post
 $json_raw = file_get_contents("php://input");
 $json_data = json_decode($json_raw,true);
 $userName = $json_data["userName"];
 $password = $json_data["password"];
-//创建SQL连接
-
-
+//Create SQL connection
 $link = initMySqlConnector();
-//SQL防注入
+//SQL anti injection
 $userName = mysqli_real_escape_string($link,$userName);
 $password = mysqli_real_escape_string($link,$password);
-//验证输入格式
+//Verify input format
 $data= array(
     'username'=>$userName,
     'password'=>$password,
@@ -31,30 +29,32 @@ foreach ($validate as $k=>$v){
         $error[]=$reResult;
     }
 }
+if(strtoupper($_SERVER['REQUEST_METHOD'])=='OPTIONS'){
+    exit();
+}
 
-//判断用户是否存在
+//Judge whether the user exists
 $sql = "SELECT COUNT(*) as count FROM `user` WHERE username='$userName'";
 $result = fetchRow($link,$sql)['count'];
 if(empty($error)){
     if($result==0){
-        //echo '可以插入';
         $salt=md5(uniqid(microtime()));
         //md5*2
-
         $password=md5(md5($password.$salt));
         $sql = "INSERT INTO `user` (userName,password,salt,userState) VALUES ('$userName','$password','$salt',1)";
         if($res = query($link,$sql)){
-            $result = array("code"=>'200',"message"=>"注册成功","data"=>null);
+            $result = array("code"=>'200',"message"=>"register successful","data"=>null);
             exit(json_encode($result));
         }else{
-            $result = array("code"=>'400',"message"=>"未知错误，请联系系统管理员","data"=>null);
+            $result = array("code"=>'400',"message"=>"Unknown error, please contact system administrator","data"=>null);
             exit(json_encode($result));
         }
 
     }else {
-        $result = array("code"=>'400',"message"=>"用户已存在","data"=>null);
+        $result = array("code"=>'400',"message"=>"User already exists","data"=>null);
         exit(json_encode($result));
     }
 }else{
-    require 'register_error_html.php';
+    $result = array("code"=>'400',"message"=>"Unknown error, please contact system administrator","data"=>null);
+    exit(json_encode($result));
 }
