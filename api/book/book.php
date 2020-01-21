@@ -22,7 +22,7 @@ if(strtoupper($_SERVER['REQUEST_METHOD'])=='GET'){
     $sql = "SELECT * from book $where";
     if($res = fetchAll($link,$sql)){
         //If there is only one data, the array will not be returned, and the object will be returned directly
-        if(count($res) === 1){
+        if(count($res) === 1 && $bookID){
             $res = $res[0];
         }
         $result = array("code"=>'200',"message"=>"success","data"=>$res);
