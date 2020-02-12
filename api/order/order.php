@@ -8,9 +8,12 @@ $json_data = json_decode($json_raw,true);
 //Create SQL connection
 $link = initMySqlConnector();
 $userID = isset($_GET["userID"])?$_GET["userID"]:null;
+$orderState = isset($_GET["orderState"])?$_GET["orderState"]:null;
 if(strtoupper($_SERVER['REQUEST_METHOD'])=='GET'){
     $result = array();
-    $sql = "SELECT * from `order` where `userID`=$userID";
+    $where = $orderState===null?" where `userID`=$userID":" where `userID`=$userID and `orderState`='$orderState'";
+    $sql = "SELECT * from `order` $where";
+
     if($res = fetchAll($link,$sql)){
         foreach($res as $item){
             $orderID = $item["orderID"];
@@ -21,7 +24,7 @@ if(strtoupper($_SERVER['REQUEST_METHOD'])=='GET'){
         $result = array("code"=>'200',"message"=>"success","data"=>$result);
         exit(json_encode($result));
     }else{
-        $result = array("code"=>'400',"message"=>"failed","data"=>null);
+        $result = array("code"=>'200',"message"=>"success","data"=>null);
         exit(json_encode($result));
     }
 }elseif (strtoupper($_SERVER['REQUEST_METHOD'])=='POST'){// create order
@@ -38,15 +41,17 @@ if(strtoupper($_SERVER['REQUEST_METHOD'])=='GET'){
         $flag = true;
         $orderID = mysqli_insert_id($link);
         foreach ($bookList as $bookID){
-            $sql = "SELECT bookName,price FROM book where bookID=$bookID";
+            $sql = "SELECT * FROM book where bookID=$bookID";
             $res = fetchRow($link,$sql);
             $bookName = $res['bookName'];
             $price = $res['price'];
+            $bookDesc = $res['bookDesc'];
+            $image = $res['image'];
             $totalPrice+=$price;
             $sql = "INSERT INTO `ordersub`
-                    (`orderID`,`bookName`,`price`)
+                    (`orderID`,`bookName`,`bookDesc`,`image`,`price`)
                     VALUE
-                    ('$orderID','$bookName','$price')";
+                    ('$orderID','$bookName','$bookDesc','$image','$price')";
             if (!query($link,$sql)) $flag=false;
         }
         if($flag){
