@@ -82,6 +82,13 @@ if(strtoupper($_SERVER['REQUEST_METHOD'])=='GET'){
     if($res = query($link,$sql)){
         $sql = "SELECT `totalPrice` FROM `order` WHERE `orderID`=$orderID";
         $totalPrice = fetchRow($link,$sql)["totalPrice"];
+        $sql = "select balance from `user` where `userID`=$userID";
+        if($res = fetchRow($link,$sql)){
+            if($res["balance"]<$totalPrice){
+                $result = array("code"=>'400',"message"=>"Insufficient Balance","data"=>null);
+                exit(json_encode($result));
+            }
+        }
         $sql = "UPDATE `user` SET `balance`=`balance`-$totalPrice WHERE `userID`=$userID";
         if($res = query($link,$sql)){
             $result = array("code"=>'200',"message"=>"Successful payment","data"=>null);
