@@ -33,6 +33,11 @@ if(strtoupper($_SERVER['REQUEST_METHOD'])=='GET'){
     $dateTime = new DateTime();
     $orderTime = $dateTime->format('Y-m-d H:i:s');
     $totalPrice = 0;
+    // clear cart
+    $booIDs = implode(",",$bookList);
+    $sql = "DELETE FROM `shopping_cart` WHERE `userID`=$userID AND bookID IN ($booIDs)";
+    query($link,$sql);
+    // insert order
     $sql = "INSERT INTO `order` 
             (`userID`,`orderTime`,`orderState`,`totalPrice`) 
             VALUES
