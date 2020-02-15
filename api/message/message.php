@@ -30,6 +30,9 @@ if(strtoupper($_SERVER['REQUEST_METHOD'])=='GET'){
             if($message['from']===$to){
                 // If it's a message sent by yourself
                 // Add this message to recipient
+                if(!isset($result[$message['to']])){
+                    $result[$message['to']] = array();
+                }
                 array_push($result[$message['to']],$message);
             }else{
                 array_push($result[$message['from']],$message);
@@ -42,6 +45,7 @@ if(strtoupper($_SERVER['REQUEST_METHOD'])=='GET'){
         $result = array("code"=>'400',"message"=>"failed","data"=>null);
         exit(json_encode($result));
     }
+
 }elseif (strtoupper($_SERVER['REQUEST_METHOD'])=='POST'){// leave a message
     $from = $json_data["from"];
     $to = $json_data["to"];
