@@ -57,6 +57,9 @@ if(strtoupper($_SERVER['REQUEST_METHOD'])=='GET'){
                     (`orderID`,`bookName`,`bookDesc`,`image`,`price`,`orderSubState`)
                     VALUE
                     ('$orderID','$bookName','$bookDesc','$image','$price',0)";
+            query($link,$sql);
+            $orderSubID = mysqli_insert_id($link);
+            $sql = "update book set `orderSubID`=$orderSubID where `bookID`=$bookID";
             if (!query($link,$sql)) $flag=false;
         }
         if($flag){

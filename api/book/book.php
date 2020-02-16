@@ -32,8 +32,8 @@ if(strtoupper($_SERVER['REQUEST_METHOD'])=='GET'){
         $where = "where book.userID=$userID";
         $sql = "select * from book $where";
     }
-    if($userID&&$orderSubState==0){//If there is a userID and orderSubState==0 it means to get sold of this user
-        $where = "where book.userID=$userID and ordersub.orderSubState!=$orderSubState";
+    if($userID&&$orderSubState&&$orderSubState=='sold'){//If there is a userID and orderSubState==0 it means to get sold of this user
+        $where = "where book.userID=$userID and ordersub.orderSubState!=0";
         $sql = "SELECT book.*,
             order.userID as buyerID,
             ordersub.orderSubState,
