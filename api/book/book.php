@@ -10,7 +10,7 @@ $link = initMySqlConnector();
 $categoryID = isset($_GET["categoryID"])?$_GET["categoryID"]:null;
 $bookID = isset($_GET["bookID"])?$_GET["bookID"]:null;
 $userID = isset($_GET["userID"])?$_GET["userID"]:null;
-
+$orderSubState =isset($_GET["orderSubState"])?$_GET["orderSubState"]:null;
 $bookName = isset($json_data["image"])?$json_data["bookName"]:null;
 $image = isset($json_data["image"])?$json_data["image"]:null;
 $bookDesc = isset($json_data["bookDesc"])?$json_data["bookDesc"]:null;
@@ -18,15 +18,33 @@ $price = isset($json_data["price"])?$json_data["price"]:null;
 
 if(strtoupper($_SERVER['REQUEST_METHOD'])=='GET'){
     $where = "";
+    $sql = "select * from book $where";
     //Query statement
     if($categoryID){//If there is a classification ID, all books under the classification will be obtained
         $where = " where categoryID=$categoryID";
-    }elseif($bookID){//If there is a bookID, it means to get individual book details
-        $where =" where bookID=$bookID";
-    }elseif($userID){//If there is a userID, it means to get published of this user
-        $where = "where userID=$userID";
+        $sql = "select * from book $where";
     }
-    $sql = "SELECT * from book $where";
+    if($bookID){//If there is a bookID, it means to get individual book details
+        $where =" where bookID=$bookID";
+        $sql = "select * from book $where";
+    }
+    if($userID){//If there is a userID, it means to get published of this user
+        $where = "where book.userID=$userID";
+        $sql = "select * from book $where";
+    }
+    if($userID&&$orderSubState==0){//If there is a userID and orderSubState==0 it means to get sold of this user
+        $where = "where book.userID=$userID and ordersub.orderSubState!=$orderSubState";
+        $sql = "SELECT book.*,
+            order.userID as buyerID,
+            ordersub.orderSubState,
+            ordersub.sellerRating,
+            ordersub.sellerRatingDesc,
+            ordersub.buyerRating,
+            ordersub.buyerRatingDesc
+            FROM `book` 
+            JOIN `ordersub` ON book.orderSubID=ordersub.orderSubID
+            JOIN `order` ON `order`.orderID=ordersub.orderID $where";
+    }
     if($res = fetchAll($link,$sql)){
         //If there is only one data, the array will not be returned, and the object will be returned directly
         if(count($res) === 1 && $bookID){

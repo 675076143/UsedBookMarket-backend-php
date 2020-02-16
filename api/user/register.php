@@ -41,7 +41,7 @@ if(empty($error)){
         $salt=md5(uniqid(microtime()));
         //md5*2
         $password=md5(md5($password.$salt));
-        $sql = "INSERT INTO `user` (userName,password,salt,userState) VALUES ('$userName','$password','$salt',1)";
+        $sql = "INSERT INTO `user` (userName,password,salt,userState,avatar,balance) VALUES ('$userName','$password','$salt',1,'admin.jpg',0)";
         if($res = query($link,$sql)){
             $result = array("code"=>'200',"message"=>"register successful","data"=>null);
             exit(json_encode($result));

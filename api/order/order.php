@@ -48,15 +48,15 @@ if(strtoupper($_SERVER['REQUEST_METHOD'])=='GET'){
         foreach ($bookList as $bookID){
             $sql = "SELECT * FROM book where bookID=$bookID";
             $res = fetchRow($link,$sql);
-            $bookName = $res['bookName'];
+            $bookName = addslashes($res['bookName']);
             $price = $res['price'];
-            $bookDesc = $res['bookDesc'];
+            $bookDesc = addslashes($res['bookDesc']);
             $image = $res['image'];
             $totalPrice+=$price;
             $sql = "INSERT INTO `ordersub`
-                    (`orderID`,`bookName`,`bookDesc`,`image`,`price`)
+                    (`orderID`,`bookName`,`bookDesc`,`image`,`price`,`orderSubState`)
                     VALUE
-                    ('$orderID','$bookName','$bookDesc','$image','$price')";
+                    ('$orderID','$bookName','$bookDesc','$image','$price',0)";
             if (!query($link,$sql)) $flag=false;
         }
         if($flag){
@@ -84,6 +84,8 @@ if(strtoupper($_SERVER['REQUEST_METHOD'])=='GET'){
             SET 
             `orderState` = '1'
             WHERE `orderID` = '$orderID'";
+    query($link,$sql);
+    $sql = "UPDATE `ordersub` set `orderSubState` = '1' where `orderID` = '$orderID'";
     if($res = query($link,$sql)){
         $sql = "SELECT `totalPrice` FROM `order` WHERE `orderID`=$orderID";
         $totalPrice = fetchRow($link,$sql)["totalPrice"];
