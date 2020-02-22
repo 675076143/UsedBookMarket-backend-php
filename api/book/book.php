@@ -12,9 +12,9 @@ $categoryID = isset($_GET["categoryID"])?$_GET["categoryID"]:null;
 $bookID = isset($_GET["bookID"])?$_GET["bookID"]:null;
 $userID = isset($_GET["userID"])?$_GET["userID"]:null;
 $orderSubState =isset($_GET["orderSubState"])?$_GET["orderSubState"]:null;
-$bookName = isset($json_data["image"])?$json_data["bookName"]:null;
+$bookName = isset($json_data["bookName"])?mysqli_real_escape_string($link,$json_data["bookName"]):null;
 $image = isset($json_data["image"])?$json_data["image"]:null;
-$bookDesc = isset($json_data["bookDesc"])?$json_data["bookDesc"]:null;
+$bookDesc = isset($json_data["bookDesc"])?mysqli_real_escape_string($link,$json_data["bookDesc"]):null;
 $price = isset($json_data["price"])?$json_data["price"]:null;
 
 if(strtoupper($_SERVER['REQUEST_METHOD'])=='GET'){
@@ -55,10 +55,11 @@ if(strtoupper($_SERVER['REQUEST_METHOD'])=='GET'){
 }elseif (strtoupper($_SERVER['REQUEST_METHOD'])=='POST'){// add book
     $userID = $json_data["userID"];
     $categoryID = $json_data["categoryID"];
+    $schoolID = $json_data["schoolID"];
     $sql = "INSERT INTO book 
-            (`bookName`,`bookDesc`,`price`,`status`,`image`,`categoryID`,`userID`) 
+            (`bookName`,`bookDesc`,`price`,`status`,`image`,`categoryID`,`userID`,`schoolID`) 
             VALUES
-            ('$bookName','$bookDesc',$price,0,'$image','$categoryID',$userID)";
+            ('$bookName','$bookDesc',$price,0,'$image','$categoryID',$userID,$schoolID)";
     if($res = query($link,$sql)){
         $result = array("code"=>'200',"message"=>"add selling book successful","data"=>null);
         exit(json_encode($result));
