@@ -7,6 +7,7 @@ $json_raw = file_get_contents("php://input");
 $json_data = json_decode($json_raw,true);
 //Create SQL connection
 $link = initMySqlConnector();
+$schoolID = isset($_GET["schoolID"])?$_GET["schoolID"]:null;
 $categoryID = isset($_GET["categoryID"])?$_GET["categoryID"]:null;
 $bookID = isset($_GET["bookID"])?$_GET["bookID"]:null;
 $userID = isset($_GET["userID"])?$_GET["userID"]:null;
@@ -17,11 +18,11 @@ $bookDesc = isset($json_data["bookDesc"])?$json_data["bookDesc"]:null;
 $price = isset($json_data["price"])?$json_data["price"]:null;
 
 if(strtoupper($_SERVER['REQUEST_METHOD'])=='GET'){
-    $where = "";
+    $where = "where schoolID=$schoolID and orderSubID is null";
     $sql = "select * from book $where";
     //Query statement
     if($categoryID){//If there is a classification ID, all books under the classification will be obtained
-        $where = " where categoryID=$categoryID";
+        $where .= " and categoryID=$categoryID";
         $sql = "select * from book $where";
     }
     if($bookID){//If there is a bookID, it means to get individual book details
@@ -45,17 +46,12 @@ if(strtoupper($_SERVER['REQUEST_METHOD'])=='GET'){
             JOIN `ordersub` ON book.orderSubID=ordersub.orderSubID
             JOIN `order` ON `order`.orderID=ordersub.orderID $where";
     }
-    if($res = fetchAll($link,$sql)){
-        //If there is only one data, the array will not be returned, and the object will be returned directly
-        if(count($res) === 1 && $bookID){
-            $res = $res[0];
-        }
-        $result = array("code"=>'200',"message"=>"success","data"=>$res);
-        exit(json_encode($result));
-    }else{
-        $result = array("code"=>'400',"message"=>"failed","data"=>null);
-        exit(json_encode($result));
+    $res = fetchAll($link,$sql);
+    if(count($res) === 1 && $bookID){
+        $res = $res[0];
     }
+    $result = array("code"=>'200',"message"=>"success","data"=>$res);
+    exit(json_encode($result));
 }elseif (strtoupper($_SERVER['REQUEST_METHOD'])=='POST'){// add book
     $userID = $json_data["userID"];
     $categoryID = $json_data["categoryID"];
