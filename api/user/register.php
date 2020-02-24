@@ -39,9 +39,12 @@ $result = fetchRow($link,$sql)['count'];
 if(empty($error)){
     if($result==0){
         $salt=md5(uniqid(microtime()));
+        $createTime = date('Y-m-d h:i:s', time());
         //md5*2
         $password=md5(md5($password.$salt));
-        $sql = "INSERT INTO `user` (userName,password,salt,userState,avatar,balance) VALUES ('$userName','$password','$salt',1,'admin.jpg',0)";
+        $sql = "INSERT INTO `user` 
+                (userName,password,salt,userState,avatar,balance,create_time) 
+                VALUES ('$userName','$password','$salt',1,'admin.jpg',0,'$createTime')";
         if($res = query($link,$sql)){
             $result = array("code"=>'200',"message"=>"register successful","data"=>null);
             exit(json_encode($result));
