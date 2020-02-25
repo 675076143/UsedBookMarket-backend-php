@@ -33,8 +33,12 @@ if(strtoupper($_SERVER['REQUEST_METHOD'])=='GET'){
         exit(json_encode($result));
     }
 }elseif (strtoupper($_SERVER['REQUEST_METHOD'])=='POST'){// add book to shopping cart
-    $userID = $json_data["userID"];
-    $bookID = $json_data["bookID"];
+    $userID = isset($json_data["userID"])?$json_data["userID"]:null;
+    $bookID = isset($json_data["bookID"])?$json_data["bookID"]:null;
+    if(!$userID){
+        $result = array("code"=>'400',"message"=>"Please login first","data"=>null);
+        exit(json_encode($result));
+    }
     //Judge whether the stared book exists
     $sql = "SELECT COUNT(*) as count FROM `star` WHERE userID='$userID' AND bookID='$bookID'";
     $result = fetchRow($link,$sql)['count'];
