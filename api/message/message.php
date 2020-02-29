@@ -9,13 +9,23 @@ $json_data = json_decode($json_raw,true);
 $link = initMySqlConnector();
 $from = isset($_GET["from"])?$_GET["from"]:null;
 $to = isset($_GET["to"])?$_GET["to"]:null;
+$isRead = isset($_GET["isRead"])?$_GET["isRead"]:null;
 date_default_timezone_set('prc');
 
 if(strtoupper($_SERVER['REQUEST_METHOD'])=='GET'){
+    if($isRead){// get all unread message of this user;
+        $sql = "SELECT COUNT(*) as count FROM `message` WHERE isRead is null and `to`=$to";
+        $res = fetchRow($link,$sql)['count'];
+        $result = array("code"=>'200',"message"=>"success","data"=>$res);
+        exit(json_encode($result));
+    }
     $where = "";
     //Query statement
     if($from&&$to){// if there is from and to, means get chat records of two people
         $where = " where `from`=$from and `to`=$to or `from`=$to and `to`=$from";
+        // set isRead=1
+        $sql = "update `message` set isRead=1 where `from`=$to and `to`=$from";
+        query($link,$sql);
     }else if($to){// if there is only to, means get all message of this user;
         $where = " where `to`=$to or `from`=$to";
     }
