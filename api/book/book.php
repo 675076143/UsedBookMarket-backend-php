@@ -37,6 +37,10 @@ if(strtoupper($_SERVER['REQUEST_METHOD'])=='GET'){
         $where = "where book.userID=$userID and ordersub.orderSubState!=0";
         $sql = "SELECT book.*,
             order.userID as buyerID,
+            order.name,
+            order.tel,
+            order.area,
+            order.address,
             ordersub.orderSubState,
             ordersub.sellerRating,
             ordersub.sellerRatingDesc,

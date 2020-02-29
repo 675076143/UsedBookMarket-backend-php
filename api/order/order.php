@@ -33,15 +33,20 @@ if(strtoupper($_SERVER['REQUEST_METHOD'])=='GET'){
     $dateTime = new DateTime();
     $orderTime = $dateTime->format('Y-m-d H:i:s');
     $totalPrice = 0;
+    //address info
+    $name = $json_data["name"]?$json_data["name"]:null;
+    $tel = $json_data["tel"]?$json_data["tel"]:null;
+    $area = $json_data["area"]?$json_data["area"]:null;
+    $address = $json_data["address"]?mysqli_real_escape_string($link,$json_data["address"]):null;
     // clear cart
     $booIDs = implode(",",$bookList);
     $sql = "DELETE FROM `shopping_cart` WHERE `userID`=$userID AND bookID IN ($booIDs)";
     query($link,$sql);
     // insert order
     $sql = "INSERT INTO `order` 
-            (`userID`,`orderTime`,`orderState`,`totalPrice`) 
+            (`userID`,`orderTime`,`orderState`,`totalPrice`,`name`,`tel`,`area`,`address`) 
             VALUES
-            ('$userID','$orderTime',0,'$totalPrice')";
+            ('$userID','$orderTime',0,'$totalPrice','$name','$tel','$area','$address')";
     if($res = query($link,$sql)){
         $flag = true;
         $orderID = mysqli_insert_id($link);
